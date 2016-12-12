@@ -1,0 +1,41 @@
+Run Windows Power Sheel as Adminitrator
+
+Set-ExecutionPolicy RemoteSigned
+
+$credential = Get-Credential
+
+For Office365
+
+Import-Module MsOnline
+
+Connect-MsolService -Credential $credential
+
+For Sharepoint Online
+
+Import-Module Microsoft.Online.SharePoint.PowerShell -DisableNameChecking
+
+Connect-SPOService -Url https://domainhost-admin.sharepoint.com -credential $credential
+
+For Skype
+
+Import-Module SkypeOnlineConnector
+
+$sfboSession = New-CsOnlineSession -Credential $credential
+
+Import-PSSession $sfboSession
+
+For Exchange
+
+$exchangeSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://outlook.office365.com/powershell-liveid/" -Credential $credential -Authentication "Basic" -AllowRedirection
+
+Import-PSSession $exchangeSession -DisableNameChecking
+
+For Security And Compliance Centre
+
+$ccSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $credential -Authentication Basic -AllowRedirection
+
+Import-PSSession $ccSession -Prefix cc
+
+USE THIS TO CLOSE ALL THE SESSIONS DOWN BEFORE YOU EXIT
+
+Remove-PSSession $sfboSession ; Remove-PSSession $exchangeSession ; Remove-PSSession $ccSession ; Disconnect-SPOService
